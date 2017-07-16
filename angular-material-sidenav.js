@@ -94,13 +94,13 @@
                 self.selectSection(section);
                 self.selectPage(section, page);
             };
-	    
-	    // Modified from original stateChangeStart to the new transition hooks (to work with newer versions of ui-router)
-	    let deregisterationCallback = $transitions.onStart({ }, trans => {
+		    
+	    var onStateChangeStart = function(event, toState, toParams) {
                 var newState = {
-                    toState: trans.to(),
-                    toParams: trans.params()
+                    toState: toState,
+                    toParams: toParams
                 };
+
                 sections.forEach(function(section) {
                     if (section.children) {
                         section.children.forEach(function(child) {
@@ -120,6 +120,11 @@
                         matchPage(section, section, newState);
                     }
                 });
+            };
+	    
+            // Wrapper around the original stateChangeStart using the new transition hooks (to work with newer versions of ui-router)
+            var deregisterationCallback = $transitions.onStart({ }, function(trans){
+                onStateChangeStart(null,trans.to(),trans.params());
             });
             $rootScope.$on('$destroy', deregisterationCallback);
 
@@ -194,8 +199,6 @@
                     });
                 }
             };
-
-            $rootScope.$on('$stateChangeStart', onStateChangeStart);
 
             onStateChangeStart(null, $state.current, $stateParams);
 
