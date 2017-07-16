@@ -62,7 +62,7 @@
         '$stateParams',
         'ssSideNavSections',
         'ssSideNavSharedService',
-	'$transitions'
+	'$transitions',
         function(
             $rootScope,
             $location,
